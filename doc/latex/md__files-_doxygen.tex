@@ -1,0 +1,220 @@
+\paragraph*{Objetivos}
+
+Los objetivos de esta práctica son que el alumnado\+:
+\begin{DoxyItemize}
+\item Desarrolle programas sencillos en C++ que utilicen ficheros, así como todas las características del lenguaje estudiadas
+\item Aloje todo el código fuente de sus programas en repositorios privados de Git\+Hub
+\item Sepa depurar sus programas usando la interfaz de depuración del V\+SC
+\item Conozca la herramienta Doxygen
+\item Incluya en sus programas comentarios en el formato requerido por Doxygen
+\end{DoxyItemize}
+
+\paragraph*{Rúbrica de evaluacion de esta práctica}
+
+Se señalan a continuación los aspectos más relevantes (la lista no es exhaustiva) que se tendrán en cuenta a la hora de evaluar esta práctica\+:
+\begin{DoxyItemize}
+\item El alumnado ha de acreditar conocer los conceptos expuestos en el material de referencia de esta práctica.
+\item El alumnado ha de acreditar que ha realizado todos los ejercicios propuestos, así como ser capaz de desarrollar otros similares.
+\item Ha de acreditar que es capaz de escribir un fichero Makefile para automatizar el proceso de compilación de sus programas.
+\item El código que escriba ha de estar escrito de acuerdo a los estándares definidos en la Guía de Estilo de Google para C++.
+\item Todos los identificadores que utilice en su programa (constantes, variables, etc.) deberán ser siempre significativos. No utilice nunca identificadores de una única letra, tal vez con la excepción de las variables que utilice para iterar en un bucle.
+\item Antes de su ejecución, todos los programas que desarrolle, deben imprimir en pantalla un mensaje indicando la finalidad del programa así como la información que precisará del usuario para su correcta ejecución.
+\item Ante la presencia de cualquier bug, el alumnado ha de conocer las técnicas básicas de depuración usando V\+SC
+\item Todos los ficheros de código del proyecto correspondiente a esta práctica han de alojarse en un repositorio de Git\+Hub
+\item Los programas deben contener comentarios adecuados en el formato requerido por Doxygen
+\end{DoxyItemize}
+
+\paragraph*{Introducción a la criptografía}
+
+Durante la segunda guerra mundial, el ejército alemán utilizó la máquina conocida como {\itshape Enigma} para codificar sus mensajes. Básicamente dada una {\itshape semilla} la máquina generaba una secuencia de números pseudoaleatorios que era difícil de reproducir, incluso aunque los detalles técnicos de la máquina pudieran ser descubiertos. Los aliados habían capturado algunas de las máquinas {\itshape Enigma}, de modo que conocían la forma en que la máquina trabajaba, pero los trabajos que se realizaron para descubrir los códigos de {\itshape Enigma} fueron los fundamentos de la criptografía moderna. Alan Turing participó en este tipo de trabajos. Si está interesado en conocer más sobre esta historia vea la película \href{https://en.wikipedia.org/wiki/The_Imitation_Game}{\tt The Imitation Game} ({\itshape Descifrando Enigma} en español).
+
+La criptología es la rama de conocimiento que se ocupa del estudio y diseño de sistemas que permiten comunicaciones secretas entre un emisor de un mensaje y uno o varios receptores del mismo. Inicialmente las únicas aplicaciones de la criptología fueron militares, pero hoy en día son muchísimas otras. Por ejemplo, en los ordenadores multiusuario, cada usuario mantiene sus ficheros de una forma que no sean legibles para otros usuarios \char`\"{}indiscretos\char`\"{}. Para conseguir esto, los ficheros se codifican (encriptan) utilizando una clave que sólo conoce su propietario. Mucha de la información que enviamos a través de internet viaja también de forma codificada para protegerla de receptores no deseados.
+
+Para encriptar un fichero hay muchas alternativas. Todas ellas consisten en transformar cada uno de los caracteres del fichero original en otro carácter diferente siguiendo una determinada transformación. Indicaremos dos métodos diferentes de encriptado.
+
+\subsubsection*{Encriptado xor (or exclusiva)}
+
+El \href{https://es.wikipedia.org/wiki/Cifrado_XOR}{\tt Cifrado X\+OR} requiere una clave secreta de encriptado/desencriptado. A cada uno de los caracteres del fichero se le hará una transformación, que consistirá en hacerle la operación {\ttfamily xor} con un carácter de la clave secreta. Estudie el capítulo \href{https://www.learncpp.com/cpp-tutorial/bitwise-operators/}{\tt Bitwise operators} del tutorial y recuerde que el operador (de bits) en C/\+C++ es {\ttfamily $^\wedge$}
+
+El carácter de la clave secreta con el que se transforma el carácter original, se variará de forma cíclica. P. ej. si suponemos que la clave secreta es la palabra {\ttfamily alfa}, y las primeras palabras del texto son {\itshape Informática Básica} los primeros caracteres del fichero de salida serán\+:
+
+
+\begin{DoxyCode}
+carácter 1  I xor a
+carácter 2  n xor l
+carácter 3  f xor f
+carácter 4  o xor a
+carácter 5  r xor a
+carácter 6  m xor l
+carácter 7  á xor f
+carácter 8  t xor a
+carácter 9  i xor a
+carácter 9  c xor l
+carácter 10 a xor f
+carácter 11   xor a
+carácter 12 B xor a
+carácter 13 á xor l
+carácter 14 s xor f
+   ...
+\end{DoxyCode}
+
+
+Es decir, se va haciendo la operación {\ttfamily xor} de cada uno de los caracteres del texto de entrada con cada uno de los caracteres de la clave secreta, tomando la clave de forma cíclica (cuando se acaba con el último carácter de la clave, se comienza de nuevo con el primero).
+
+Antes de operar de este modo se procesará la clave secreta haciendo {\ttfamily xor} a cada uno de sus caracteres con la constante 128.
+
+Una ventaja de este método es su especial aptitud para ser utilizado en un ordenador puesto que la operación o exclusiva se realiza muy eficientemente en un ordenador. Otra ventaja del método es que la operación de desencriptado consiste en hacer exactamente lo mismo al texto que se ha encriptado (con la misma clave secreta, por supuesto).
+
+\subsubsection*{Cifrado de César}
+
+Como se deduce de su nombre, \href{https://es.wikipedia.org/wiki/Cifrado_C%C3%A9sar}{\tt este método} era usado ya en tiempos de los romanos. En este caso, la codificación es como sigue\+: si una letra en el texto a codificar es la N-\/ésima letra del alfabeto, sustitúyase esa letra por la (N + K)-\/ésima letra del alfabeto. (César utilizaba el valor K = 3). Se muestra a continuación un texto encriptado siguiendo este método y utilizando K = 1\+:
+
+
+\begin{DoxyCode}
+Texto original:  Navidad, Navidad, dulce navidad
+Texto encriptado:  Obwjebe-!Obwjebe-!evmdf!obwjebe
+\end{DoxyCode}
+
+
+Se puede optar por hacer fijo el valor de K o bien solicitarlo al usuario.
+
+Evidentemente, el desencriptado del fichero consistirá en realizar la operación inversa, y en este caso, el valor de K a utilizar debería solicitarse al usuario para garantizar que está autorizado a leer el fichero.
+
+\paragraph*{Entorno de trabajo}
+
+Haga que el proyecto correspondiente a esta práctica conste al menos de 3 ficheros\+:
+\begin{DoxyItemize}
+\item Un fichero {\ttfamily \hyperlink{cripto_8cc}{cripto.\+cc}} (programa principal) que contendrá la función {\ttfamily main} e incluirá el fichero de cabecera {\ttfamily funciones\+\_\+cripto.\+h}
+\item El fichero {\ttfamily funciones\+\_\+cripto.\+h} que contendrá las declaraciones de las diferentes funciones que se utilizan en el programa principal.
+\item El fichero {\ttfamily funciones\+\_\+cripto.\+cc} que contendrá el código (definiciones) de las funciones declaradas en el fichero de cabecera.
+\end{DoxyItemize}
+
+La compilación del programa ha de estar automatizada mediante un fichero Makefile.
+
+Desarrolle su programa de forma incremental, probando cada una de las funciones que va Ud. desarrollando. Utilice el depurador de V\+SC para corregir cualquier tipo de error semántico que se produzca en cualquiera de sus desarrollos.
+
+\paragraph*{Ejercicio}
+
+
+\begin{DoxyEnumerate}
+\item Desarrolle en C++ un programa {\ttfamily \hyperlink{cripto_8cc}{cripto.\+cc}} cuya finalidad será encriptar y/o desencriptar ficheros de texto. Si el programa se ejecuta sin pasar parámetros en la línea de comandos, debemos obtener el siguiente mensaje\+:
+\end{DoxyEnumerate}
+
+
+\begin{DoxyCode}
+./cripto -- Cifrado de ficheros
+Modo de uso: ./cripto fichero\_entrada fichero\_salida método password operación
+Pruebe ./cripto --help para más información
+\end{DoxyCode}
+
+
+Si el programa se ejecuta pasando la opción {\ttfamily -\/-\/help} se ha de obtener\+:
+
+
+\begin{DoxyCode}
+./cripto -- Cifrado de ficheros
+Modo de uso: ./cripto fichero\_entrada fichero\_salida método password operación
+
+fichero\_entrada: Fichero a codificar
+fichero\_salida:  Fichero codificado
+método:          Indica el método de encriptado
+                   1: Cifrado xor 
+                   2: Cifrado de César
+password:        Palabra secreta en el caso de método 1, Valor de K en el método 2
+operación:       Operación a realizar en el fichero
+                   +: encriptar el fichero
+                   -: desencriptar el fichero
+\end{DoxyCode}
+
+
+El programa solo se ejecutará cuando se le hayan pasado por línea de comandos los parámetros necesarios. En caso de detectar cualquier inconsistencia en los parámetros, el programa debe abortar su ejecución. Se indicará asimismo un mensaje de error si el programa no consigue abrir el fichero de entrada.
+
+\paragraph*{Documentación de código. Doxygen}
+
+\href{https://en.wikipedia.org/wiki/Doxygen}{\tt Doxygen} es una herramienta de código abierto que permite generar documentación de referencia para proyectos de desarrollo software. La documentación está escrita en el propio código fuente de los programas, y por lo tanto es relativamente fácil de mantener actualizada. Doxygen puede hacer referencias cruzadas entre la documentación y el código, de modo que el lector de un documento puede referirse fácilmente al código fuente. La herramienta extrae la documentación de los comentarios de los ficheros de código fuente y puede generar la salida en diferentes formatos entre los cuales están H\+T\+ML, P\+DF La\+TeX o páginas man de Unix.
+
+En esta asignatura no se propone un uso exhaustivo de Doxygen pero sí se promueve que la documentación de los programas desarrollados se realice en el formato reconocido por Doxygen, que se ha convertido en un estándar de facto.
+
+Comience por instalar Doxygen en su máquina virtual de la asignatura\+: 
+\begin{DoxyCode}
+$ sudo apt install doxygen
+\end{DoxyCode}
+ Instale también los siguientes paquetes\+: 
+\begin{DoxyCode}
+$ sudo apt install texlive-latex-base
+$ sudo apt install texlive-latex-recommended
+$ sudo apt install texlive-latex-extra
+\end{DoxyCode}
+ Estos paquetes son necesarios para compilar ficheros en formato Latex. Más adelante en este documento se justifica la necesidad de los programas que suministran estos paquetes.
+
+En el \href{https://www.doxygen.nl/manual/starting.html}{\tt manual de Doxygen} indica cómo comenzar a trabajar con la herramienta. Si, ubicados en un directorio de trabajo se invoca {\ttfamily doxygen}\+: 
+\begin{DoxyCode}
+doxygen -g <config-file>
+\end{DoxyCode}
+
+
+la herramienta creará un fichero de configuración. Si no se le pasa el nombre del fichero como parámetro, creará un fichero con nombre {\ttfamily Doxyfile} preconfigurado para su uso. En el directorio de trabajo de esta práctica ({\ttfamily src}) se encuentra un fichero {\ttfamily Doxyfile} ya listo para usarse con proyectos de C++. Se ha incluído asimismo el código fuente de un programa para ilustrar con el mismo el uso de documentación con Doxygen. Si revisa Ud. el fichero {\ttfamily Doxyfile} (es un fichero de texto) verá toda una serie de opciones que el programa permite. Cada opción va precedida de una explicación de su finalidad y funcionamiento, de modo que puede Ud. probar a modificar algunas de ellas si lo desea. En \href{https://www.doxygen.nl/manual/config.html}{\tt esta página} puede consultarse la finalidad y funcionamiento de cada una de las etiquetas (Tags) que se usan en el fichero de configuración de Doxygen.
+
+Para generar la documentación de su aplicación, colóquese en el directorio de su proyecto ({\ttfamily src} en esta práctica) y ejecute\+: 
+\begin{DoxyCode}
+doxygen Doxyfile
+\end{DoxyCode}
+
+
+Con el fichero {\ttfamily Doxyfile} que se suministra, la herramienta creará un subdirectorio {\ttfamily doc} en el directorio raíz de su proyecto en el que alojará toda la documentación generada. El directorio donde Doxygen genera su salida se especifica con la etiqueta {\ttfamily O\+U\+T\+P\+U\+T\+\_\+\+D\+I\+R\+E\+C\+T\+O\+RY} (línea 61 del fichero {\ttfamily Doxyfile} suministrado). Con la configuración suministrada se generan dos subdirectorios dentro de {\ttfamily doc}\+: {\ttfamily html} y {\ttfamily latex}. Si abre con un navegador el fichero {\ttfamily doc/html/index.\+html} accederá a la página principal de la documentación generada para el programa. Si se coloca en el directorio {\ttfamily doc/latex/} y ejecuta {\ttfamily make} el sistema \char`\"{}compila\char`\"{} el código latex y genera un fichero {\ttfamily refman.\+pdf} que contiene igualmente la documentación generada.
+
+Tal como se ha indicado, H\+T\+ML o latex son solo dos de los formatos que permite generar Doxygen. Tanto H\+T\+ML como Latex (también Markdown) son lo que se conoce como \href{https://es.wikipedia.org/wiki/Lenguaje_de_marcado}{\tt lenguajes de marcas}. H\+T\+ML es el lenguaje que se utiliza para componer los textos que se muestran en las páginas web. \href{https://en.wikipedia.org/wiki/LaTeX}{\tt Latex} es un sistema de composición de textos que cuida el formato en especial en el ámbito de la tipografía y que es especialmente adecuado para textos de carácter científico. No se pretende aquí que profundice Ud. en conocer H\+T\+ML o Latex.
+
+La sección \href{https://www.doxygen.nl/manual/config.html}{\tt Documenting the code} del manual de Doxygen indica cómo comentar el código fuente de modo que los comentarios sean procesados por Doxygen para incorporarlos a la documentación generada.
+
+La guía \href{https://developer.lsst.io/cpp/api-docs.html}{\tt Documenting C++ Code} de documentación de código del proyecto L\+L\+ST es la referencia que se adoptará en la asignatura para documentar el código de los programas que se desarrollen. Se utilizarán comentarios de tipo Java\+Doc para comentarios de bloque\+:
+
+
+\begin{DoxyCode}
+/**
+ * ... text ...
+ */
+\end{DoxyCode}
+ \href{https://en.wikipedia.org/wiki/Javadoc}{\tt Java\+Doc} es otro sistema de documentación ideado para Java y que también es muy popular. Doxygen soporta el uso de etiquetas \char`\"{}al estilo Javadoc\char`\"{} en el código.
+
+Los bloques de comentarios multi-\/línea deben comenzar con 
+\begin{DoxyCode}
+/** 
+\end{DoxyCode}
+ y finalizar con 
+\begin{DoxyCode}
+*/
+\end{DoxyCode}
+ Los comentarios de una única línea deben comenzar con {\ttfamily ///}. Por consistencia no use las opciones 
+\begin{DoxyCode}
+/*!
+\end{DoxyCode}
+ o 
+\begin{DoxyCode}
+//!
+\end{DoxyCode}
+ permitidas en Doxygen.
+
+Así el bloque de comentarios que debe preceder a cualquier función (o método) tendrá la siguiente apariencia\+: 
+\begin{DoxyCode}
+/**
+ * Sum numbers in a vector.
+ *
+ * @param values Container whose values are summed.
+ * @return sum of `values`, or 0.0 if `values` is empty.
+ */
+double sum(std::vector<double>& const values) \{
+  ...
+\}
+\end{DoxyCode}
+ En el ejemplo anterior {\ttfamily @param} y {\ttfamily @return} son etiquetas de tipo Javadoc. En \href{http://www.time2help.com/doc/online_help/idh_java_doc_tag_support.htm}{\tt Overview of supported Java\+Doc style tags} pueden consultarse este tipo de etiquetas.
+
+El siguiente es un ejemplo (plantilla) de comentario de bloque que debería incluirse al comienzo de todos los ficheros ($\ast$.cc, $\ast$.h) de un proyecto de programación en el ámbito de esta asignatura\+: ``` /$\ast$$\ast$
+\begin{DoxyItemize}
+\item Universidad de La Laguna
+\item Escuela Superior de Ingeniería y Tecnología
+\item Grado en Ingeniería Informática
+\item Informática Básica
+\item 
+\item 
+\end{DoxyItemize}
