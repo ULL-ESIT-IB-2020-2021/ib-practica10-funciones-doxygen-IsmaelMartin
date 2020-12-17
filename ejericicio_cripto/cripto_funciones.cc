@@ -121,6 +121,21 @@ std::string DesencriptadoCesar(std::string contenido, const int k){
   return contenido_desencriptado;
 }
 
-
+void ContarVocales(std::string contenido){
+  const char Kvocal{'e'};
+  int contador{0};
+  for (int i = 0; i <= contenido.length(); ++i){
+    char caracter = contenido[i];
+    if(caracter == Kvocal){
+      contador += 1;
+    }
+  }
+  if (contador == 1){
+    std::cout << "Hay " << contador << " vez que se repite la vocal e." << std::endl;
+  }
+  else if (contador == 0 || contador > 1){
+    std::cout << "Hay " << contador << " veces que se repite la vocal e." << std::endl;
+  }
+}
 
  

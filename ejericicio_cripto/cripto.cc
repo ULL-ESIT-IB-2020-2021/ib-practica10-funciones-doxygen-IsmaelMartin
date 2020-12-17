@@ -35,6 +35,7 @@ int main(int argc, char* argv[]){
     buffer << input.rdbuf();
     std::string contenido{buffer.str()};
   std::ofstream fichero_modificado(nombre_fichero_salida, std::ofstream::out);
+  ContarVocales(contenido);
   
   /** 
    *  Filtro para comprobar que método de encriptado se desea usar

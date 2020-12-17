@@ -18,3 +18,4 @@ bool IsInteger(std::string str);
 std::string EncriptadoXor(std::string contenido, std::string clave);
 std::string EncriptadoCesar(std::string contenido, const int k);
 std::string DesencriptadoCesar(std::string contenido, const int k);
+void ContarVocales(std::string contenido);
